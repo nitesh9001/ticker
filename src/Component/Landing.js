@@ -5,14 +5,8 @@ import { Link } from "react-router-dom";
 import Tooltips from "../Common/Tooltips";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getData } from "../actions/dataAction";
-// import { w3cwebsocket as W3CWebSocket } from "websocket";
-// const client = new W3CWebSocket("wss://api-pub.bitfinex.com/ws/2");
-// const msg = JSON.stringify({
-//   event: "subscribe",
-//   channel: "ticker",
-//   symbol: "tBTCUSD",
-// });
+import { getData, closeData } from "../actions/dataAction";
+
 class Landing extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +37,9 @@ class Landing extends Component {
           <div className="center-heading">Ticker App</div>
           <div className="remarks-alignment">
             <div className="action-center-header"></div>
-            <div className="action-center"></div>
+            <div className="action-center">
+              <button onClick={() => this.props.closeData()}>Close</button>
+            </div>
             <div className="action-center-ticker">
               <div className="action-center-ticker-top">
                 <div className="action-center-ticker-svg">
@@ -128,18 +124,47 @@ class Landing extends Component {
                         : "--"}{" "}
                     </span>
                     <span className="value-span">
-                      <i
-                        class="fa fa-sort-desc"
-                        aria-hidden="true"
-                        style={{
-                          cursor: "pointer",
-                          padding: "5px",
-                          color: "red",
-                          marginTop: "-5px",
-                        }}
-                      ></i>
+                      {this.state.data ? (
+                        this.state.data[1] ? (
+                          this.state.data[1][5] < 0 ? (
+                            <i
+                              class="fa fa-sort-desc"
+                              aria-hidden="true"
+                              style={{
+                                cursor: "pointer",
+                                padding: "5px",
+                                color: "red",
+                                marginTop: "-5px",
+                              }}
+                            ></i>
+                          ) : (
+                            <i
+                              class="fa fa-sort-asc "
+                              aria-hidden="true"
+                              style={{
+                                cursor: "pointer",
+                                padding: "5px",
+                                color: "green",
+                                marginTop: "-5px",
+                              }}
+                            ></i>
+                          )
+                        ) : (
+                          ""
+                        )
+                      ) : (
+                        ""
+                      )}
                     </span>
-                    <span className="value-span redcolor-rate">(1.23%)</span>
+                    <span className="value-span redcolor-rate">
+                      (
+                      {this.state.data
+                        ? this.state.data[1]
+                          ? (this.state.data[1][5] * 100).toFixed(2)
+                          : "   "
+                        : ""}
+                      %)
+                    </span>
                   </div>
                   <div className="action-center-ticker-data-third">
                     <span className="fade-span">HIGH</span>
@@ -185,6 +210,7 @@ const mapStateToProps = (state) => {
   };
 };
 Landing.propTypes = {
+  closeData: PropTypes.func.isRequired,
   getData: PropTypes.func.isRequired,
 };
-export default connect(mapStateToProps, { getData })(Landing);
+export default connect(mapStateToProps, { getData, closeData })(Landing);

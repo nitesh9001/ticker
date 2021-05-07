@@ -30,3 +30,9 @@ export const getData = (data) => (dispatch) => {
     });
   };
 };
+
+export const closeData = () => (dispatch) => {
+  client.onclose = function (event) {
+    console.log("WebSocket is closed now.");
+  };
+};
